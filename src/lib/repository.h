@@ -213,6 +213,11 @@ public:
     Theme theme(const QString &themeName) const;
 
     /**
+     * Returns a theme from @p themeFilePath.
+     */
+    Theme themeFromFile(const QString &themeFilePath) const;
+
+    /**
      * Built-in default theme types.
      * @see defaultTheme()
      */

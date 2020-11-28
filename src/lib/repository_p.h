@@ -56,12 +56,21 @@ public:
     quint16 foldingRegionId(const QString &defName, const QString &foldName);
     quint16 nextFormatId();
 
+    /**
+     * Returns a theme from @p themeFilePath.
+     */
+    Theme themeFromFile(const QString &themeFilePath) const;
+
     QVector<QString> m_customSearchPaths;
 
     QHash<QString, Definition> m_defs;
     QVector<Definition> m_sortedDefs;
 
     QVector<Theme> m_themes;
+
+    // Map themeFilePath to theme.
+    // External themes are not managed by m_themes.
+    QHash<QString, Theme> m_externalThemes;
 
     QHash<QPair<QString, QString>, quint16> m_foldingRegionIds;
     quint16 m_foldingRegionId = 0;

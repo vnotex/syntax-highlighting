@@ -150,6 +150,11 @@ Theme Repository::theme(const QString &themeName) const
     return Theme();
 }
 
+Theme Repository::themeFromFile(const QString &themeFilePath) const
+{
+    return d->themeFromFile(themeFilePath);
+}
+
 Theme Repository::defaultTheme(Repository::DefaultTheme t)
 {
     if (t == DarkTheme)
@@ -297,6 +302,21 @@ quint16 RepositoryPrivate::nextFormatId()
 {
     Q_ASSERT(m_formatId < std::numeric_limits<quint16>::max());
     return ++m_formatId;
+}
+
+Theme RepositoryPrivate::themeFromFile(const QString &themeFilePath) const
+{
+    auto it = m_externalThemes.find(themeFilePath);
+    if (it != m_externalThemes.end()) {
+        return *it;
+    }
+
+    auto themeData = std::unique_ptr<ThemeData>(new ThemeData);
+    if (themeData->load(themeFilePath)) {
+        return Theme(themeData.release());
+    } else {
+        return Theme();
+    }
 }
 
 void Repository::reload()
