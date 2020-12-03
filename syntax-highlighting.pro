@@ -1,4 +1,4 @@
-TARGET = KSyntaxHighlighting
+TARGET = VSyntaxHighlighting
 TEMPLATE = lib
 CONFIG += shared dll
 
