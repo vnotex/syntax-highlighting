@@ -1,5 +1,6 @@
 TARGET = VSyntaxHighlighting
 TEMPLATE = lib
+CONFIG += lib_bundle
 CONFIG += shared dll
 
 CONFIG += c++14
@@ -58,3 +59,14 @@ SOURCES += \
     src/lib/theme.cpp \
     src/lib/themedata.cpp \
     src/lib/wildcardmatcher.cpp \
+
+## INSTALLS
+unix:!macx {
+    isEmpty(PREFIX): PREFIX = /usr
+    LIBDIR = $${PREFIX}/lib
+
+    # qmake will automatically do symlinks
+    target.path = $${LIBDIR}
+
+    INSTALLS += target
+}
