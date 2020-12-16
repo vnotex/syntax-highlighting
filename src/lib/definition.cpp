@@ -645,7 +645,7 @@ void DefinitionData::loadGeneral(QXmlStreamReader& reader)
                     std::sort(wordDelimiters.begin(), wordDelimiters.end());
                     auto it = std::unique(wordDelimiters.begin(), wordDelimiters.end());
                     wordDelimiters.truncate(std::distance(wordDelimiters.begin(), it));
-                    for (const auto c : reader.attributes().value(QLatin1String("weakDeliminator")))
+                    for (const auto &c : reader.attributes().value(QLatin1String("weakDeliminator")))
                         wordDelimiters.remove(c);
 
                     // adaptWordWrapDelimiters, and sort
