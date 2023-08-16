@@ -184,7 +184,7 @@ void DefinitionDownloader::start()
                       + QString::number(SyntaxHighlighting_VERSION_MINOR)
                       + QLatin1String(".xml");
     auto req = QNetworkRequest(QUrl(url));
-    req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
     auto reply = d->nam->get(req);
     QObject::connect(reply, &QNetworkReply::finished, this, [=]() {
         d->definitionListDownloadFinished(reply);

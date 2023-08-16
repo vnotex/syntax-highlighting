@@ -246,13 +246,17 @@ bool Format::hasSelectedBackgroundColorOverride() const
     return d->style.selectedBackgroundColor;
 }
 
-
 void FormatPrivate::load(QXmlStreamReader& reader)
 {
     name = reader.attributes().value(QStringLiteral("name")).toString();
-    defaultStyle = stringToDefaultFormat(reader.attributes().value(QStringLiteral("defStyleNum")));
 
-    QStringRef attribute = reader.attributes().value(QStringLiteral("color"));
+    QStringView view = reader.attributes().value(QStringLiteral("defStyleNum"));
+    const QString s(view.toString());
+    QStringRef ref(&s);
+    defaultStyle = stringToDefaultFormat(ref);
+
+    //QStringRef attribute = reader.attributes().value(QStringLiteral(("color")));
+    QStringView attribute = reader.attributes().value(QStringLiteral("color"));
     if (!attribute.isEmpty()) {
         style.textColor = QColor(attribute.toString()).rgba();
     }

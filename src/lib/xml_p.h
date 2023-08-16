@@ -25,13 +25,13 @@
 #define KSYNTAXHIGHLIGHTING_XML_P_H
 
 #include <QString>
-
+#include <QStringRef>
 namespace KSyntaxHighlighting {
 /** Utilities for XML parsing. */
 namespace Xml {
 
 /** Parse a xs:boolean attribute. */
-inline bool attrToBool(const QStringRef &str)
+inline bool attrToBool(const QStringView &str)
 {
     return str == QLatin1String("1") || str.compare(QLatin1String("true"), Qt::CaseInsensitive) == 0;
 }

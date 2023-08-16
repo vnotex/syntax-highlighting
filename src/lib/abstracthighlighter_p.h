@@ -28,7 +28,7 @@
 #include "theme.h"
 
 QT_BEGIN_NAMESPACE
-class QStringList;
+//class QStringList;
 QT_END_NAMESPACE
 
 namespace KSyntaxHighlighting {

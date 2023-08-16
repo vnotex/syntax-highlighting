@@ -161,7 +161,7 @@ bool Rule::doLoad(QXmlStreamReader& reader)
     return true;
 }
 
-Rule::Ptr Rule::create(const QStringRef& name)
+Rule::Ptr Rule::create(const QStringView& name)
 {
     Rule *rule = nullptr;
     if (name == QLatin1String("AnyChar"))
@@ -435,7 +435,7 @@ bool IncludeRules::includeAttribute() const
 bool IncludeRules::doLoad(QXmlStreamReader& reader)
 {
     const auto s = reader.attributes().value(QLatin1String("context"));
-    const auto split = s.split(QLatin1String("##"), QString::KeepEmptyParts);
+    const auto split = s.split(QString("##"));
     if (split.isEmpty())
         return false;
     m_contextName = split.at(0).toString();
@@ -500,11 +500,12 @@ MatchResult KeywordListRule::doMatch(const QString& text, int offset, const QStr
     if (newOffset == offset)
         return offset;
 
+    QStringView view;
     if (m_hasCaseSensitivityOverride) {
-        if (m_keywordList->contains(text.midRef(offset, newOffset - offset), m_caseSensitivityOverride))
+        if (m_keywordList->contains(view.mid(offset, newOffset - offset), m_caseSensitivityOverride))
             return newOffset;
     } else {
-        if (m_keywordList->contains(text.midRef(offset, newOffset - offset)))
+        if (m_keywordList->contains(view.mid(offset, newOffset - offset)))
             return newOffset;
     }
 
@@ -632,7 +633,8 @@ MatchResult StringDetect::doMatch(const QString& text, int offset, const QString
      */
     const auto &pattern = m_dynamic ? replaceCaptures(m_string, captures, false) : m_string;
 
-    if (text.midRef(offset, pattern.size()).compare(pattern, m_caseSensitivity) == 0)
+
+    if (text.mid(offset, pattern.size()).compare(pattern, m_caseSensitivity) == 0)
         return offset + pattern.size();
     return offset;
 }
@@ -653,7 +655,7 @@ MatchResult WordDetect::doMatch(const QString& text, int offset, const QStringLi
     if (offset > 0 && !isWordDelimiter(text.at(offset - 1)))
         return offset;
 
-    if (text.midRef(offset, m_word.size()).compare(m_word, m_caseSensitivity) != 0)
+    if (text.mid(offset, m_word.size()).compare(m_word, m_caseSensitivity) != 0)
         return offset;
 
     if (text.size() == offset + m_word.size() || isWordDelimiter(text.at(offset + m_word.size())))
