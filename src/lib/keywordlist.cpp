@@ -32,7 +32,7 @@
 
 using namespace KSyntaxHighlighting;
 
-bool KeywordList::contains(const QStringRef &str, Qt::CaseSensitivity caseSensitive) const
+bool KeywordList::contains(const QStringView &str, Qt::CaseSensitivity caseSensitive) const
 {
     /**
      * get right vector to search in
@@ -42,7 +42,7 @@ bool KeywordList::contains(const QStringRef &str, Qt::CaseSensitivity caseSensit
     /**
      * search with right predicate
      */
-    return std::binary_search(vectorToSearch.begin(), vectorToSearch.end(), str, [caseSensitive] (const QStringRef &a, const QStringRef &b) { return a.compare(b, caseSensitive) < 0; });
+    return std::binary_search(vectorToSearch.begin(), vectorToSearch.end(), str, [caseSensitive] (const QStringView &a, const QStringView &b) { return a.compare(b, caseSensitive) < 0; });
 }
 
 void KeywordList::load(QXmlStreamReader& reader)

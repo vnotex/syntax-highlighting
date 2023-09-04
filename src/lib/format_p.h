@@ -30,6 +30,7 @@
 
 #include <QSharedData>
 #include <QString>
+#include <QStringRef>
 
 namespace KSyntaxHighlighting {
 
@@ -40,6 +41,7 @@ public:
     static FormatPrivate* detachAndGet(Format &format);
 
     TextStyleData styleOverride(const Theme &theme) const;
+    QStringRef readAttr(QXmlStreamReader &reader, QString attr);
     void load(QXmlStreamReader &reader);
 
     DefinitionRef definition;
