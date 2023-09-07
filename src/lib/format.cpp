@@ -35,7 +35,7 @@
 
 using namespace KSyntaxHighlighting;
 
-static Theme::TextStyle stringToDefaultFormat(const QStringRef &str)
+static Theme::TextStyle stringToDefaultFormat(const QStringView &str)
 {
     if (!str.startsWith(QLatin1String("ds")))
         return Theme::Normal;
@@ -250,12 +250,8 @@ void FormatPrivate::load(QXmlStreamReader& reader)
 {
     name = reader.attributes().value(QStringLiteral("name")).toString();
 
-    QStringView view = reader.attributes().value(QStringLiteral("defStyleNum"));
-    const QString s(view.toString());
-    QStringRef ref(&s);
-    defaultStyle = stringToDefaultFormat(ref);
+    defaultStyle = stringToDefaultFormat(reader.attributes().value(QStringLiteral("defStyleNum")));
 
-    //QStringRef attribute = reader.attributes().value(QStringLiteral(("color")));
     QStringView attribute = reader.attributes().value(QStringLiteral("color"));
     if (!attribute.isEmpty()) {
         style.textColor = QColor(attribute.toString()).rgba();

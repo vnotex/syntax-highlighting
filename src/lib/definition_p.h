@@ -30,7 +30,7 @@
 #include <QHash>
 #include <QString>
 #include <QVector>
-#include <QStringRef>
+#include <QStringView>
 QT_BEGIN_NAMESPACE
 class QXmlStreamReader;
 class QJsonObject;

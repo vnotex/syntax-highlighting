@@ -25,10 +25,11 @@
 #define KSYNTAXHIGHLIGHTING_KEYWORDLIST_P_H
 
 #include <QString>
+#include <QStringView>
+#include <QStringRef>
 #include <QStringList>
 
 #include <vector>
-#include <QStringRef>
 
 QT_BEGIN_NAMESPACE
 class QXmlStreamReader;

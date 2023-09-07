@@ -25,7 +25,9 @@
 #define KSYNTAXHIGHLIGHTING_CONTEXTSWITCH_P_H
 
 #include <QString>
-#include <QStringRef>
+
+class QStringView;
+
 namespace KSyntaxHighlighting {
 
 class Context;

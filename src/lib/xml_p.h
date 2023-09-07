@@ -25,7 +25,7 @@
 #define KSYNTAXHIGHLIGHTING_XML_P_H
 
 #include <QString>
-#include <QStringRef>
+
 namespace KSyntaxHighlighting {
 /** Utilities for XML parsing. */
 namespace Xml {

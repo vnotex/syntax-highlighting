@@ -435,7 +435,7 @@ bool IncludeRules::includeAttribute() const
 bool IncludeRules::doLoad(QXmlStreamReader& reader)
 {
     const auto s = reader.attributes().value(QLatin1String("context"));
-    const auto split = s.split(QString("##"));
+    const auto split = s.split(QString("##"), Qt::KeepEmptyParts);
     if (split.isEmpty())
         return false;
     m_contextName = split.at(0).toString();
