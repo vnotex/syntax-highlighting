@@ -61,13 +61,21 @@ void HtmlHighlighter::setOutputFile(const QString& fileName)
         return;
     }
     d->out.reset(new QTextStream(d->file.get()));
-    d->out->setEncoding(QStringConverter::Utf8);
+    #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+        d->out->setCodec("UTF8");
+    #else
+        d->out->setEncoding(QStringConverter::Utf8);
+    #endif
 }
 
 void HtmlHighlighter::setOutputFile(FILE *fileHandle)
 {
     d->out.reset(new QTextStream(fileHandle, QIODevice::WriteOnly));
-    d->out->setEncoding(QStringConverter::Utf8);
+    #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+        d->out->setCodec("UTF8");
+    #else
+        d->out->setEncoding(QStringConverter::Utf8);
+    #endif
 }
 
 void HtmlHighlighter::highlightFile(const QString& fileName, const QString& title)
@@ -110,7 +118,11 @@ void HtmlHighlighter::highlightData(QIODevice *dev, const QString& title)
     *d->out << "><pre>\n";
 
     QTextStream in(dev);
-    in.setEncoding(QStringConverter::Utf8);
+    #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+        in.setCodec("UTF8");
+    #else
+        in.setEncoding(QStringConverter::Utf8);
+    #endif
     while (!in.atEnd()) {
         d->currentLine = in.readLine();
         state = highlightLine(d->currentLine, state);

@@ -35,7 +35,10 @@
 #include <QFileInfo>
 #include <QJsonDocument>
 #include <QJsonObject>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 #include <QBinaryJson>
+#endif
 
 #ifndef NO_STANDARD_PATHS
 #include <QStandardPaths>
@@ -232,7 +235,11 @@ bool RepositoryPrivate::loadSyntaxFolderFromIndex(Repository *repo, const QStrin
     if (!indexFile.open(QFile::ReadOnly))
         return false;
 
-    const auto indexDoc(QBinaryJson::fromBinaryData(indexFile.readAll()));
+    #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+        const auto indexDoc(QJsonDocument::fromBinaryData(indexFile.readAll()));
+    #else
+        const auto indexDoc(QBinaryJson::fromBinaryData(indexFile.readAll()));
+    #endif
     const auto index = indexDoc.object();
     for (auto it = index.begin(); it != index.end(); ++it) {
         if (!it.value().isObject())
