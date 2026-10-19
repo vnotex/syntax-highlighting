@@ -173,6 +173,11 @@ Theme Repository::theme(const QString &themeName) const
     return Theme();
 }
 
+Theme Repository::themeFromFile(const QString &themeFilePath) const
+{
+    return d->themeFromFile(themeFilePath);
+}
+
 Theme Repository::defaultTheme(Repository::DefaultTheme t) const
 {
     if (t == DarkTheme) {
@@ -379,6 +384,15 @@ void RepositoryPrivate::addTheme(const Theme &theme)
     if (themeRevision(*constIt) < themeRevision(theme)) {
         m_themes[index] = theme;
     }
+}
+
+Theme RepositoryPrivate::themeFromFile(const QString &themeFilePath) const
+{
+    auto data = std::make_unique<ThemeData>();
+    if (!data->load(themeFilePath) || !data->loadComplete()) {
+        return Theme();
+    }
+    return Theme(data.release());
 }
 
 int RepositoryPrivate::foldingRegionId(const QString &defName, const QString &foldName)

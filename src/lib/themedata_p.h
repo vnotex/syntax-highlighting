@@ -40,7 +40,7 @@ public:
      */
     bool load(const QString &filePath);
 
-    void loadComplete();
+    bool loadComplete();
 
     /**
      * Returns the unique name of this Theme.

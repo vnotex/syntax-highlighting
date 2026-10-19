@@ -1,36 +1,26 @@
-# when cross compiling, use either the executable offered or try to cross-compile it in place
+set(KATEHIGHLIGHTINGINDEXER_EXECUTABLE "" CACHE FILEPATH "Host katehighlightingindexer executable for cross-compilation")
 
-if(CMAKE_CROSSCOMPILING AND KATEHIGHLIGHTINGINDEXER_EXECUTABLE)
+if(CMAKE_CROSSCOMPILING)
+    if(NOT KATEHIGHLIGHTINGINDEXER_EXECUTABLE)
+        message(FATAL_ERROR "Cross-compiling requires KATEHIGHLIGHTINGINDEXER_EXECUTABLE to point to a host katehighlightingindexer built from the same sources.")
+    endif()
     add_executable(katehighlightingindexer IMPORTED GLOBAL)
-    set_target_properties(katehighlightingindexer PROPERTIES IMPORTED_LOCATION ${KATEHIGHLIGHTINGINDEXER_EXECUTABLE})
-elseif(CMAKE_CROSSCOMPILING)
-    include(ECMQueryQt)
-    ecm_query_qt(NATIVE_PREFIX QT_HOST_PREFIX)
-    message(STATUS "Building katehighlightingindexer against ${NATIVE_PREFIX}")
-
-    include(ExternalProject)
-    ExternalProject_Add(native_katehighlightingindexer
-                        SOURCE_DIR ${CMAKE_SOURCE_DIR}
-                        CMAKE_ARGS -DKSYNTAXHIGHLIGHTING_USE_GUI=OFF
-                            -DECM_DIR=${ECM_DIR} -DCMAKE_PREFIX_PATH=${NATIVE_PREFIX}
-                            -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}
-                            -DQT_MAJOR_VERSION=6
-                        INSTALL_COMMAND ""
-                        BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/native_katehighlightingindexer-prefix/src/native_katehighlightingindexer-build/bin/katehighlightingindexer
-                    )
-    add_executable(katehighlightingindexer IMPORTED GLOBAL)
-    add_dependencies(katehighlightingindexer native_katehighlightingindexer)
-    set_target_properties(katehighlightingindexer PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_CURRENT_BINARY_DIR}/native_katehighlightingindexer-prefix/src/native_katehighlightingindexer-build/bin/katehighlightingindexer)
+    set_target_properties(katehighlightingindexer PROPERTIES
+        IMPORTED_LOCATION "${KATEHIGHLIGHTINGINDEXER_EXECUTABLE}"
+    )
 else()
-    # host build
     add_executable(katehighlightingindexer katehighlightingindexer.cpp ../lib/worddelimiters.cpp)
-    ecm_mark_nongui_executable(katehighlightingindexer)
+    target_compile_features(katehighlightingindexer PRIVATE cxx_std_20)
+    set_target_properties(katehighlightingindexer PROPERTIES WIN32_EXECUTABLE OFF MACOSX_BUNDLE OFF)
+    target_link_libraries(katehighlightingindexer PRIVATE Qt6::Core)
+
+    find_package(XercesC QUIET)
     if(XercesC_FOUND)
-        add_definitions(-DHAS_XERCESC)
-        kde_target_enable_exceptions(katehighlightingindexer PRIVATE)
-        target_link_libraries(katehighlightingindexer Qt6::Core XercesC::XercesC)
-    else()
-        target_link_libraries(katehighlightingindexer Qt6::Core)
+        target_compile_definitions(katehighlightingindexer PRIVATE HAS_XERCESC)
+        target_compile_options(katehighlightingindexer PRIVATE
+            $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
+            $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-fexceptions>
+        )
+        target_link_libraries(katehighlightingindexer PRIVATE XercesC::XercesC)
     endif()
 endif()

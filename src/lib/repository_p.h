@@ -37,6 +37,7 @@ public:
 
     void loadThemeFolder(const QString &path);
     void addTheme(const Theme &theme);
+    Theme themeFromFile(const QString &themeFilePath) const;
 
     int foldingRegionId(const QString &defName, const QString &foldName);
     int nextFormatId();

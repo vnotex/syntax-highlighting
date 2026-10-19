@@ -114,16 +114,16 @@ bool ThemeData::load(const QString &filePath)
     return true;
 }
 
-void ThemeData::loadComplete()
+bool ThemeData::loadComplete()
 {
     if (m_completelyLoaded) {
-        return;
+        return true;
     }
     m_completelyLoaded = true;
 
     QFile loadFile(m_filePath);
     if (!loadFile.open(QIODevice::ReadOnly)) {
-        return;
+        return false;
     }
     const QByteArray jsonData = loadFile.readAll();
 
@@ -131,7 +131,7 @@ void ThemeData::loadComplete()
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData, &parseError);
     if (parseError.error != QJsonParseError::NoError) {
         qCWarning(Log) << "Failed to parse theme file" << m_filePath << ":" << parseError.errorString();
-        return;
+        return false;
     }
 
     QJsonObject obj = jsonDoc.object();
@@ -193,7 +193,7 @@ void ThemeData::loadComplete()
         }
     }
 
-    return;
+    return true;
 }
 
 QString ThemeData::name() const

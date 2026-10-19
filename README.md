@@ -23,7 +23,7 @@ It's meant as a building block for text editors as well as for simple highlighte
 text rendering (e.g. as HTML), supporting both integration with a custom editor
 as well as a ready-to-use QSyntaxHighlighter sub-class.
 
-Besides a C++ API, a [QML API](@ref qml_api) is also provided.
+Upstream also provides a [QML API](@ref qml_api); this standalone fork builds the C++ library only.
 
 ## Out of scope
 
@@ -113,47 +113,46 @@ Also see ["Submit a KSyntaxHighlighting Color Theme" (Kate Editor Website)](http
 
 ## Build it
 
-1. Create and change into a build directory. Usually, a folder called **build**
-   is created inside the **syntax-highlighting** source directory.
+This fork starts from upstream **KSyntaxHighlighting 6.30.0** and builds the real
+`VSyntaxHighlighting` target without KDE Frameworks or ECM. It requires CMake 3.21+,
+Qt 6.9+ Core/Gui/Network, Perl, Python 3 and a compiler supporting C++20 for the syntax
+indexer. The library and its public consumers require C++17; Core5Compat is not needed
+by this dependency. Qt 5 is not supported.
 
-   ```bash
-   mkdir <build-directory>
-   cd <build-directory>
-   ```
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --target VSyntaxHighlighting --parallel
+```
 
-2. Run the configure process with *cmake* and compile:
+Set `CMAKE_PREFIX_PATH` to your Qt SDK when needed. Keep its runtime libraries available
+to the build-time indexer. An embedding project can use `add_subdirectory()` and link
+`VSyntaxHighlighting`; the target supplies the source and generated include directories.
+Both `<Repository>` and `<KSyntaxHighlighting/Repository>` (and the other public CamelCase
+headers) work. Version, logging and export headers are generated in the build tree.
+`BUILD_SHARED_LIBS` selects shared versus static builds; no installed library/package
+export is provided by this fork.
 
-   ```bash
-   cmake <source-directory>
-   make
-   ```
+`QRC_SYNTAX` defaults to ON and embeds the full indexed/compressed catalog, including
+Perl-generated PHP/Twig/JSONC/XSLT variants and Python-generated Jinja grammars. With it
+OFF, `cmake --install build` installs the indexed catalog under
+`${CMAKE_INSTALL_DATADIR}/org.kde.syntax-highlighting/syntax-bundled` instead. Themes are
+always embedded. `NO_STANDARD_PATHS=ON` disables system/user-directory discovery but
+retains embedded resources and explicit `addCustomSearchPath()` calls.
 
-   For example:
+Cross-compiling requires `KATEHIGHLIGHTINGINDEXER_EXECUTABLE` pointing to a native host
+indexer built from the same sources. A target executable is never run as a host tool.
+Xerces-C is optional for build-time schema validation.
 
-   ```bash
-   git clone git@invent.kde.org:frameworks/syntax-highlighting.git
-   mkdir ./syntax-highlighting/build
-   cd ./syntax-highlighting/build
-   cmake ../
-   make
-   ```
+The existing `Repository::themeFromFile(const QString &) const` extension loads a complete
+snapshot, including Qt resource paths, and returns an invalid theme on read/JSON errors.
+It does not cache paths. The old named `Default` theme is retained alongside upstream
+Breeze Light/Breeze Dark; upstream `defaultTheme()` selection is unchanged. Rebuild
+consumers against this engine; binary compatibility with the old fork is not provided.
 
-   For more details see ["Building Kate from Sources on Linux" (Kate Editor Website)](https://kate-editor.org/build-it/).
-
-   **NOTE:** If running *cmake* shows an error related to your version of KDE
-   Frameworks, you edit the **CMakeLists.txt** file in the line
-   `find_package(ECM 5.XX.X ...)`.
-
-3. To run tests:
-
-   ```bash
-   make test
-   ```
-
-   The tests are located in the **autotests** directory.
-   This command can be used to check changes to units test after modifying some
-   syntax definition file. To add a unit test or update the references, see the
-   section ["Adding unit tests for a syntax definition"](#adding-unit-tests-for-a-syntax-definition).
+The standalone build does not configure KDE's CLI, QML, examples or autotest targets.
+The vtextedit parent provides native editor/theme regression coverage. The contribution
+and reference-generation instructions below describe the KDE upstream build, not this
+standalone build.
 
 ## How to contribute
 

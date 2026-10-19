@@ -215,6 +215,12 @@ public:
     Q_INVOKABLE KSyntaxHighlighting::Theme theme(const QString &themeName) const;
 
     /*!
+     * Loads a complete theme snapshot from a file or Qt resource path.
+     * Returns an invalid Theme if the file cannot be read or parsed.
+     */
+    Theme themeFromFile(const QString &themeFilePath) const;
+
+    /*!
      * Built-in default theme types.
      * \sa defaultTheme()
      *
