@@ -124,9 +124,11 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --target VSyntaxHighlighting --parallel
 ```
 
-Set `CMAKE_PREFIX_PATH` to your Qt SDK when needed. Keep its runtime libraries available
-to the build-time indexer. An embedding project can use `add_subdirectory()` and link
-`VSyntaxHighlighting`; the target supplies the source and generated include directories.
+Set `CMAKE_PREFIX_PATH` to your Qt SDK when needed. Native Windows builds stage the
+matching Qt Core DLL beside the build-time indexer, including the Debug runtime, so
+catalog generation does not require Qt's `bin` directory on the build environment's
+`PATH`. An embedding project can use `add_subdirectory()` and link `VSyntaxHighlighting`;
+the target supplies the source and generated include directories.
 Both `<Repository>` and `<KSyntaxHighlighting/Repository>` (and the other public CamelCase
 headers) work. Version, logging and export headers are generated in the build tree.
 `BUILD_SHARED_LIBS` selects shared versus static builds; no installed library/package
@@ -140,7 +142,8 @@ always embedded. `NO_STANDARD_PATHS=ON` disables system/user-directory discovery
 retains embedded resources and explicit `addCustomSearchPath()` calls.
 
 Cross-compiling requires `KATEHIGHLIGHTINGINDEXER_EXECUTABLE` pointing to a native host
-indexer built from the same sources. A target executable is never run as a host tool.
+indexer built from the same sources, with its runtime libraries available on the host.
+A target executable is never run as a host tool.
 Xerces-C is optional for build-time schema validation.
 
 The existing `Repository::themeFromFile(const QString &) const` extension loads a complete
