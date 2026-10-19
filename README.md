@@ -145,9 +145,12 @@ Xerces-C is optional for build-time schema validation.
 
 The existing `Repository::themeFromFile(const QString &) const` extension loads a complete
 snapshot, including Qt resource paths, and returns an invalid theme on read/JSON errors.
-It does not cache paths. The old named `Default` theme is retained alongside upstream
-Breeze Light/Breeze Dark; upstream `defaultTheme()` selection is unchanged. Rebuild
-consumers against this engine; binary compatibility with the old fork is not provided.
+It does not cache paths. The named `Default` theme keeps its white background and
+classic palette, with current Breeze Light operator/raw-string styles and CSV/TSV
+column colors. GitHub Light-inspired INI/Python/Rust/XML/Odin overrides use that same
+palette. Its editor colors use current role names; `defaultTheme()` still selects
+upstream Breeze Light/Breeze Dark. Rebuild consumers against this engine; binary
+compatibility with the old fork is not provided.
 
 The standalone build does not configure KDE's CLI, QML, examples or autotest targets.
 The vtextedit parent provides native editor/theme regression coverage. The contribution
