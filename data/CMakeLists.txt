@@ -1,57 +1,6 @@
 # create a directory for generated definitions
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generated/syntax")
 
-# init list of generated definitions
-set(gen_defs)
-
-macro(generate_syntax_definition generator targetFile srcFile)
-    add_custom_target(
-        ${targetFile} ALL
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/generated/syntax/${targetFile}
-    )
-    add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/syntax/${targetFile}
-        COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generators/${generator}
-                ${CMAKE_CURRENT_SOURCE_DIR}/syntax/${srcFile}
-                ${CMAKE_CURRENT_BINARY_DIR}/generated/syntax/${targetFile}
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generators/${generator}
-                ${CMAKE_CURRENT_SOURCE_DIR}/syntax/${srcFile}
-                ${ARGN}
-        VERBATIM
-    )
-    set(gen_defs ${gen_defs} ${CMAKE_CURRENT_BINARY_DIR}/generated/syntax/${targetFile})
-endmacro()
-
-macro(generate_syntax_definition_with_html syntax mergedSyntax)
-    generate_syntax_definition(generate-html.pl ${mergedSyntax}-${syntax}.xml ${mergedSyntax}.xml ${CMAKE_CURRENT_SOURCE_DIR}/syntax/${syntax}.xml)
-endmacro()
-
-# generate PHP definitions
-generate_syntax_definition_with_html(php html)
-generate_syntax_definition_with_html(php css)
-generate_syntax_definition_with_html(php javascript)
-generate_syntax_definition_with_html(php javascript-react)
-generate_syntax_definition_with_html(php typescript)
-generate_syntax_definition_with_html(php mustache)
-
-# generate Twig definitions
-generate_syntax_definition_with_html(twig html)
-generate_syntax_definition_with_html(twig css)
-generate_syntax_definition_with_html(twig javascript)
-generate_syntax_definition_with_html(twig javascript-react)
-generate_syntax_definition_with_html(twig typescript)
-
-# generate DoxygenLua definition
-generate_syntax_definition(generate-doxygenlua.pl doxygenlua.xml doxygen.xml)
-
-# generate XSLT definition
-generate_syntax_definition(generate-xslt.pl xslt.xml xml.xml
-    ${CMAKE_CURRENT_SOURCE_DIR}/generators/xslt.base.xml
-)
-
-# generate JSONC definition
-generate_syntax_definition(generate-jsonc.pl jsonc.xml json.xml)
-
 # generate Jinja definitions
 set(jinja_langs html css xml json yaml toml sql python cpp qml java groovy rust javascript typescript ruby cmake qmake ini bash zsh dockerfile terraform systemd-unit)
 set(jinja_indir ${CMAKE_CURRENT_SOURCE_DIR}/syntax)
@@ -96,11 +45,10 @@ add_custom_command(
             ${in_xmls}
     VERBATIM
 )
-set(gen_defs ${gen_defs} ${out_xmls})
 
 # find all definitions
 file(GLOB src_defs "${CMAKE_CURRENT_SOURCE_DIR}/syntax/*.xml")
-set(defs ${src_defs} ${gen_defs})
+set(defs ${src_defs} ${out_xmls})
 
 # object library to make cross-folder dependencies work
 add_library(SyntaxHighlightingData OBJECT)

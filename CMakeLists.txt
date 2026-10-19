@@ -10,7 +10,6 @@ include(GNUInstallDirs)
 include(GenerateExportHeader)
 
 find_package(Qt6 6.9 NO_MODULE REQUIRED COMPONENTS Core Gui Network)
-find_package(Perl REQUIRED)
 find_package(Python 3 REQUIRED COMPONENTS Interpreter)
 
 option(QRC_SYNTAX "Bundle the syntax definition files inside the library as resources" ON)

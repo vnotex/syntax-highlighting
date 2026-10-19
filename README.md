@@ -115,7 +115,7 @@ Also see ["Submit a KSyntaxHighlighting Color Theme" (Kate Editor Website)](http
 
 This fork starts from upstream **KSyntaxHighlighting 6.30.0** and builds the real
 `VSyntaxHighlighting` target without KDE Frameworks or ECM. It requires CMake 3.21+,
-Qt 6.9+ Core/Gui/Network, Perl, Python 3 and a compiler supporting C++20 for the syntax
+Qt 6.9+ Core/Gui/Network, Python 3 and a compiler supporting C++20 for the syntax
 indexer. The library and its public consumers require C++17; Core5Compat is not needed
 by this dependency. Qt 5 is not supported.
 
@@ -135,7 +135,7 @@ headers) work. Version, logging and export headers are generated in the build tr
 export is provided by this fork.
 
 `QRC_SYNTAX` defaults to ON and embeds the full indexed/compressed catalog, including
-Perl-generated PHP/Twig/JSONC/XSLT variants and Python-generated Jinja grammars. With it
+checked-in PHP/Twig/DoxygenLua/XSLT/JSONC variants and Python-generated Jinja grammars. With it
 OFF, `cmake --install build` installs the indexed catalog under
 `${CMAKE_INSTALL_DATADIR}/org.kde.syntax-highlighting/syntax-bundled` instead. Themes are
 always embedded. `NO_STANDARD_PATHS=ON` disables system/user-directory discovery but
@@ -159,6 +159,27 @@ The standalone build does not configure KDE's CLI, QML, examples or autotest tar
 The vtextedit parent provides native editor/theme regression coverage. The contribution
 and reference-generation instructions below describe the KDE upstream build, not this
 standalone build.
+
+### Regenerating checked-in syntax definitions
+
+Normal builds do not need Perl. The 14 Perl-generated XMLs are checked into `data/syntax/`:
+six PHP variants (HTML, CSS, JavaScript, JSX, TypeScript, Mustache), five Twig variants
+(HTML, CSS, JavaScript, JSX, TypeScript), DoxygenLua, XSLT and JSONC. Python still generates
+Jinja definitions during the build.
+
+With Perl installed, run this from the syntax-highlighting repository root:
+
+```sh
+cmake -P data/generators/regenerate-perl-syntax.cmake
+```
+
+This runs the original generators and normalizes their outputs to LF. Do not hand-edit
+the generated XMLs. The tradeoff is manual refresh: whenever their base grammars,
+PHP/Twig dependencies, generator scripts or `data/generators/xslt.base.xml` change
+(including upstream updates), rerun the command and commit the refreshed XMLs with the
+input changes. Rebuild the catalog to validate references. When syncing upstream build
+rules, retain this checked-in-data workflow: restoring in-build Perl generation would
+reintroduce the dependency and duplicate the checked-in definitions.
 
 ## How to contribute
 
